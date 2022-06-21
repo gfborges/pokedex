@@ -1,14 +1,12 @@
 use crate::domain::entities::{PokemonName, PokemonNumber, PokemonTypes};
 use crate::repositories::pokemon::{Insert, Repository};
 
-#[derive(Debug)]
 pub struct Request {
     number: u16,
     name: String,
     types: Vec<String>,
 }
 
-#[derive(Debug)]
 pub enum Response {
     Ok(u16),
     Conflict,
