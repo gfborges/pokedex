@@ -8,7 +8,7 @@ pub struct Request {
     pub name: String,
     pub types: Vec<String>,
 }
-
+#[derive(Debug)]
 pub enum Response {
     Ok(u16),
     Conflict,
@@ -22,16 +22,17 @@ pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Response {
         PokemonName::try_from(req.name),
         PokemonTypes::try_from(req.types),
     ) {
-        (Ok(number), Ok(name), Ok(types)) => match repo.insert(number, name, types) {
-            Insert::Ok(number) => Response::Ok(u16::from(number)),
-            Insert::Conflict => Response::Conflict,
-            _ => Response::Error
-        },
+        (Ok(number), Ok(name), Ok(types)) => {
+            println!("no try from error");
+            match repo.insert(number, name, types) {
+                Insert::Ok(number) => Response::Ok(u16::from(number)),
+                Insert::Conflict => Response::Conflict,
+                _ => Response::Error,
+            }
+        }
         _ => Response::BadRequest,
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {
@@ -100,16 +101,16 @@ mod tests {
     fn it_should_return_an_error_when_an_unexpected_error_happens() {
         let repo = Arc::new(InMemoryRepository::new().with_error());
         let number = 25;
-        let req = Request{
+        let req = Request {
             number,
             name: String::from("Pikachu"),
-            types: vec![String::from("Electric")]
+            types: vec![String::from("Electric")],
         };
 
         let res = execute(repo, req);
 
         match res {
-            Response::Error => {},
+            Response::Error => {}
             _ => unreachable!(),
         }
     }

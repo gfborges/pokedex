@@ -68,9 +68,9 @@ impl TryFrom<String> for PokemonType {
     type Error = ();
 
     fn try_from(tipe: String) -> Result<Self, Self::Error> {
-        match tipe.to_uppercase().as_str() {
-            "ELECTRIC" => Ok(PokemonType::Electric),
-            "FIRE" => Ok(PokemonType::Fire),
+        match tipe.as_str() {
+            "Electric" => Ok(PokemonType::Electric),
+            "Fire" => Ok(PokemonType::Fire),
             _ => Err(()),
         }
     }

@@ -30,7 +30,6 @@ pub fn serve(repo: Arc<dyn Repository>, req: &rouille::Request) -> rouille::Resp
     };
 
     let res = create_pokemon::execute(repo, req);
-
     match res {
         create_pokemon::Response::Ok(number) => rouille::Response::json(&Response { number }),
         create_pokemon::Response::Conflict => rouille::Response::from(Status::Conflict),
@@ -42,7 +41,7 @@ pub fn serve(repo: Arc<dyn Repository>, req: &rouille::Request) -> rouille::Resp
 #[cfg(test)]
 mod tests {
     use crate::{
-        domain::entities::{Pokemon, PokemonName, PokemonNumber, PokemonTypes},
+        domain::entities::{PokemonName, PokemonNumber, PokemonTypes},
         repositories::pokemon::InMemoryRepository,
     };
 
@@ -95,8 +94,8 @@ mod tests {
         // Arrange
         let req = Request {
             number: 20,
-            name: String::from("Electabuzz"),
-            types: vec![String::from("Electric")],
+            name: "Electabuzz".to_owned(),
+            types: vec!["Electric".to_owned()],
         };
         let req = request(Some(req));
         let repo = Arc::new(InMemoryRepository::new().with_error());
@@ -109,20 +108,21 @@ mod tests {
     }
 
     #[test]
-    fn it_should_return_conflic_when_number_exists() {
+    fn it_should_return_conflict_when_number_exists() {
         // Arrange
         let req = Request {
             number: 20,
-            name: String::from("Electabuzz"),
-            types: vec![String::from("Electric")],
+            name: "Electabuzz".to_owned(),
+            types: vec!["Electric".to_owned()],
         };
         let req = request(Some(req));
-        let repo = Arc::new(InMemoryRepository::new().with_error());
+        let repo = Arc::new(InMemoryRepository::new());
         repo.insert(
             PokemonNumber::try_from(20).unwrap(),
             PokemonName::try_from("Pikachu".to_owned()).unwrap(),
             PokemonTypes::try_from(vec!["Electric".to_owned()]).unwrap(),
         );
+
         // Act
         let res = serve(repo, &req);
 

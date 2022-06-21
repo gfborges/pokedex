@@ -24,6 +24,7 @@ impl InMemoryRepository {
         }
     }
 
+    #[cfg(test)]
     pub fn with_error(self) -> Self {
         Self {
             error: true,
@@ -37,13 +38,16 @@ impl Repository for InMemoryRepository {
         if self.error {
             return Insert::Error;
         }
+        println!("no error");
         let mut pokemons = match self.pokemons.lock() {
             Ok(lock) => lock,
             _ => return Insert::Error, 
         };
+        println!("no mutex error");
         if pokemons.iter().any(|pokemon| pokemon.number == number) {
             return Insert::Conflict;
         }
+        println!("no conflict ");
 
         let number_clone = number.clone();
         pokemons.push(Pokemon::new(number, name, types));
