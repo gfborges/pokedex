@@ -23,7 +23,6 @@ pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Response {
         PokemonTypes::try_from(req.types),
     ) {
         (Ok(number), Ok(name), Ok(types)) => {
-            println!("no try from error");
             match repo.insert(number, name, types) {
                 Insert::Ok(number) => Response::Ok(u16::from(number)),
                 Insert::Conflict => Response::Conflict,
