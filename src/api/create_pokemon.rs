@@ -124,9 +124,9 @@ mod tests {
         let req = request(Some(req));
         let repo = Arc::new(InMemoryRepository::new());
         repo.insert(
-            PokemonNumber::try_from(20).unwrap(),
-            PokemonName::try_from("Pikachu".to_owned()).unwrap(),
-            PokemonTypes::try_from(vec!["Electric".to_owned()]).unwrap(),
+            PokemonNumber::pikachu(),
+            PokemonName::pikachu(),
+            PokemonTypes::pikachu(),
         )
         .ok();
 

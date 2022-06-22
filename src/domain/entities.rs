@@ -1,4 +1,3 @@
-
 #[derive(Clone)]
 pub struct Pokemon {
     pub number: PokemonNumber,
@@ -15,8 +14,16 @@ impl Pokemon {
         }
     }
 }
+
 #[derive(PartialEq)]
 pub struct PokemonNumber(u16);
+
+#[cfg(test)]
+impl PokemonNumber {
+    pub fn pikachu() -> Self {
+        Self(25)
+    }
+}
 
 impl TryFrom<u16> for PokemonNumber {
     type Error = ();
@@ -45,6 +52,21 @@ impl Clone for PokemonNumber {
 #[derive(Clone)]
 pub struct PokemonName(String);
 
+#[cfg(test)]
+impl PokemonName {
+    pub fn pikachu() -> Self {
+        Self("Pikachu".to_owned())
+    }
+
+    pub fn vulpix() -> Self {
+        Self("Vulpix".to_owned())
+    }
+
+    pub fn bad() -> Self {
+        Self("".to_owned())
+    }
+}
+
 impl TryFrom<String> for PokemonName {
     type Error = ();
 
@@ -62,7 +84,6 @@ impl From<PokemonName> for String {
         name.0
     }
 }
-
 
 #[derive(Clone)]
 enum PokemonType {
@@ -94,6 +115,17 @@ impl From<PokemonType> for String {
 #[derive(Clone)]
 pub struct PokemonTypes(Vec<PokemonType>);
 
+#[cfg(test)]
+impl PokemonTypes {
+    pub fn pikachu() -> Self {
+        Self(vec![PokemonType::Electric])
+    }
+
+    pub fn vulpix() -> Self {
+        Self(vec![PokemonType::Fire])
+    }
+}
+
 impl TryFrom<Vec<String>> for PokemonTypes {
     type Error = ();
     fn try_from(types: Vec<String>) -> Result<Self, Self::Error> {
@@ -113,7 +145,7 @@ impl TryFrom<Vec<String>> for PokemonTypes {
     }
 }
 
-impl From<PokemonTypes> for Vec::<String> {
+impl From<PokemonTypes> for Vec<String> {
     fn from(types: PokemonTypes) -> Self {
         types.0.into_iter().map(String::from).collect()
     }

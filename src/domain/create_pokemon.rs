@@ -89,9 +89,9 @@ mod tests {
     #[test]
     fn it_should_return_a_conflict_error_when_pokemon_already_exists() {
         let repo = Arc::new(InMemoryRepository::new());
-        let number = PokemonNumber::try_from(25).unwrap();
-        let name = PokemonName::try_from(String::from("Pikachu")).unwrap();
-        let types = PokemonTypes::try_from(vec![String::from("Electric")]).unwrap();
+        let number = PokemonNumber::pikachu();
+        let name = PokemonName::pikachu();
+        let types = PokemonTypes::pikachu();
         repo.insert(number, name, types).ok();
 
         let req = Request {
