@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::domain::entities::{PokemonName, PokemonNumber, PokemonTypes};
-use crate::repositories::pokemon::{Insert, Repository};
+use crate::repositories::pokemon::{InsertError, Repository};
 
 pub struct Request {
     pub number: u16,
@@ -9,14 +9,13 @@ pub struct Request {
     pub types: Vec<String>,
 }
 #[derive(Debug)]
-pub enum Response {
-    Ok(u16),
-    Conflict,
+pub enum Error {
     BadRequest,
-    Error,
+    Conflict,
+    Unknown,
 }
 
-pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Response {
+pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Result<u16, Error> {
     match (
         PokemonNumber::try_from(req.number),
         PokemonName::try_from(req.name),
@@ -24,12 +23,12 @@ pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Response {
     ) {
         (Ok(number), Ok(name), Ok(types)) => {
             match repo.insert(number, name, types) {
-                Insert::Ok(number) => Response::Ok(u16::from(number)),
-                Insert::Conflict => Response::Conflict,
-                _ => Response::Error,
+                Ok(number) => Ok(u16::from(number)),
+                Err(InsertError::Conflict) => Err(Error::Conflict),
+                _ => Err(Error::Unknown),
             }
         }
-        _ => Response::BadRequest,
+        _ => Err(Error::BadRequest),
     }
 }
 
@@ -53,8 +52,8 @@ mod tests {
         let res = execute(repo, req);
 
         match res {
-            Response::Ok(res) => assert_eq!(res, number),
-            _ => unreachable!(),
+            Ok(res) => assert_eq!(res, number),
+            _ => unreachable!("execute returned an error"),
         }
     }
 
@@ -70,7 +69,7 @@ mod tests {
         let res = execute(repo, req);
 
         match res {
-            Response::BadRequest => {}
+            Err(Error::BadRequest) => {}
             _ => unreachable!(),
         };
     }
@@ -81,7 +80,7 @@ mod tests {
         let number = PokemonNumber::try_from(25).unwrap();
         let name = PokemonName::try_from(String::from("Pikachu")).unwrap();
         let types = PokemonTypes::try_from(vec![String::from("Electric")]).unwrap();
-        repo.insert(number, name, types);
+        repo.insert(number, name, types).ok();
 
         let req = Request {
             number: 25,
@@ -91,7 +90,7 @@ mod tests {
         let res = execute(repo, req);
 
         match res {
-            Response::Conflict => {}
+            Err(Error::Conflict) => {}
             _ => unreachable!(),
         }
     }
@@ -109,7 +108,7 @@ mod tests {
         let res = execute(repo, req);
 
         match res {
-            Response::Error => {}
+            Err(Error::Unknown) => {}
             _ => unreachable!(),
         }
     }
