@@ -8,26 +8,35 @@ pub struct Request {
     pub name: String,
     pub types: Vec<String>,
 }
-#[derive(Debug)]
+
+pub struct Response {
+    pub number: u16,
+    pub name: String,
+    pub types: Vec<String>,
+}
+
 pub enum Error {
     BadRequest,
     Conflict,
     Unknown,
 }
 
-pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Result<u16, Error> {
+pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Result<Response, Error> {
     match (
         PokemonNumber::try_from(req.number),
         PokemonName::try_from(req.name),
         PokemonTypes::try_from(req.types),
     ) {
-        (Ok(number), Ok(name), Ok(types)) => {
-            match repo.insert(number, name, types) {
-                Ok(number) => Ok(u16::from(number)),
-                Err(InsertError::Conflict) => Err(Error::Conflict),
-                _ => Err(Error::Unknown),
-            }
-        }
+        (Ok(number), Ok(name), Ok(types)) => match repo.insert(number, name.clone(), types.clone())
+        {
+            Ok(pokemon) => Ok(Response {
+                number: u16::from(pokemon.number),
+                name: String::from(pokemon.name),
+                types: Vec::<String>::from(pokemon.types),
+            }),
+            Err(InsertError::Conflict) => Err(Error::Conflict),
+            _ => Err(Error::Unknown),
+        },
         _ => Err(Error::BadRequest),
     }
 }
@@ -40,11 +49,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_should_return_the_pokemon_number_otherwise() {
+    fn it_should_return_the_pokemon_otherwise() {
         let repo = Arc::new(InMemoryRepository::new());
-        let number = 25;
         let req = Request {
-            number,
+            number: 25,
             name: String::from("Pikachu"),
             types: vec![String::from("Electric")],
         };
@@ -52,7 +60,11 @@ mod tests {
         let res = execute(repo, req);
 
         match res {
-            Ok(res) => assert_eq!(res, number),
+            Ok(res) => {
+                assert_eq!(res.number, 25);
+                assert_eq!(res.name, "Pikachu".to_owned());
+                assert_eq!(res.types, vec!["Electric".to_owned()]);
+            }
             _ => unreachable!("execute returned an error"),
         }
     }

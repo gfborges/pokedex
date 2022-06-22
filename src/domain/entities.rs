@@ -1,7 +1,9 @@
+
+#[derive(Clone)]
 pub struct Pokemon {
     pub number: PokemonNumber,
-    name: PokemonName,
-    types: PokemonTypes,
+    pub name: PokemonName,
+    pub types: PokemonTypes,
 }
 
 impl Pokemon {
@@ -39,6 +41,8 @@ impl Clone for PokemonNumber {
         Self(self.0.clone())
     }
 }
+
+#[derive(Clone)]
 pub struct PokemonName(String);
 
 impl TryFrom<String> for PokemonName {
@@ -59,6 +63,8 @@ impl From<PokemonName> for String {
     }
 }
 
+
+#[derive(Clone)]
 enum PokemonType {
     Electric,
     Fire,
@@ -76,6 +82,16 @@ impl TryFrom<String> for PokemonType {
     }
 }
 
+impl From<PokemonType> for String {
+    fn from(tipe: PokemonType) -> Self {
+        match tipe {
+            PokemonType::Electric => "Electric".to_owned(),
+            PokemonType::Fire => "Fire".to_owned(),
+        }
+    }
+}
+
+#[derive(Clone)]
 pub struct PokemonTypes(Vec<PokemonType>);
 
 impl TryFrom<Vec<String>> for PokemonTypes {
@@ -94,5 +110,11 @@ impl TryFrom<Vec<String>> for PokemonTypes {
         }
 
         Ok(Self(pokemon_types))
+    }
+}
+
+impl From<PokemonTypes> for Vec::<String> {
+    fn from(types: PokemonTypes) -> Self {
+        types.0.into_iter().map(String::from).collect()
     }
 }
