@@ -101,10 +101,7 @@ mod tests {
         };
         let res = execute(repo, req);
 
-        match res {
-            Err(Error::Conflict) => {}
-            _ => unreachable!(),
-        }
+        assert!(matches!(res, Err(Error::Conflict)), "execute didn't return conflict");
     }
 
     #[test]

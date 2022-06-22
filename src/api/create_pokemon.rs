@@ -117,7 +117,7 @@ mod tests {
     fn it_should_return_conflict_when_number_exists() {
         // Arrange
         let req = Request {
-            number: 20,
+            number: 25,
             name: "Electabuzz".to_owned(),
             types: vec!["Electric".to_owned()],
         };
@@ -128,7 +128,7 @@ mod tests {
             PokemonName::pikachu(),
             PokemonTypes::pikachu(),
         )
-        .ok();
+        .expect("error inserting pikachu");
 
         // Act
         let res = serve(repo, &req);

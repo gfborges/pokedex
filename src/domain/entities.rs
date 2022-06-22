@@ -1,3 +1,4 @@
+use std::cmp::{PartialEq, PartialOrd};
 #[derive(Clone)]
 pub struct Pokemon {
     pub number: PokemonNumber,
@@ -15,13 +16,35 @@ impl Pokemon {
     }
 }
 
-#[derive(PartialEq)]
+#[cfg(test)]
+impl Pokemon {
+    pub fn pikachu() -> Self {
+        Self {
+            number: PokemonNumber::pikachu(),
+            name: PokemonName::pikachu(),
+            types: PokemonTypes::pikachu(),
+        }
+    }
+
+    pub fn vulpix() -> Self {
+        Self {
+            number: PokemonNumber::vulpix(),
+            name: PokemonName::vulpix(),
+            types: PokemonTypes::vulpix(),
+        }
+    }
+}
+
+#[derive(PartialEq, Clone, PartialOrd, Eq, Ord)]
 pub struct PokemonNumber(u16);
 
 #[cfg(test)]
 impl PokemonNumber {
     pub fn pikachu() -> Self {
         Self(25)
+    }
+    pub fn vulpix() -> Self {
+        Self(37)
     }
 }
 
@@ -40,12 +63,6 @@ impl TryFrom<u16> for PokemonNumber {
 impl From<PokemonNumber> for u16 {
     fn from(n: PokemonNumber) -> Self {
         n.0
-    }
-}
-
-impl Clone for PokemonNumber {
-    fn clone(&self) -> Self {
-        Self(self.0.clone())
     }
 }
 
