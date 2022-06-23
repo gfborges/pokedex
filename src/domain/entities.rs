@@ -40,11 +40,17 @@ pub struct PokemonNumber(u16);
 
 #[cfg(test)]
 impl PokemonNumber {
+    
     pub fn pikachu() -> Self {
         Self(25)
     }
+    
     pub fn vulpix() -> Self {
         Self(37)
+    }
+
+    pub fn bad() -> Self {
+        Self(0)
     }
 }
 
