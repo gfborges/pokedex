@@ -1,16 +1,30 @@
 use std::sync::Arc;
 
-use repositories::pokemon::InMemoryRepository;
-
 mod api;
+mod cli;
 pub mod domain;
 pub mod repositories;
 
 #[macro_use]
 extern crate rouille;
+#[macro_use]
+extern crate clap;
 extern crate serde;
 
+use clap::{App, Arg};
+use repositories::pokemon::InMemoryRepository;
+
 fn main() {
-    let repo = InMemoryRepository::new();
-    api::serve("127.0.0.1:8000", Arc::new(repo));
+    let repo = Arc::new(InMemoryRepository::new());
+
+    let matches = App::new(crate_name!())
+        .version(crate_version!())
+        .author(crate_authors!())
+        .arg(Arg::with_name("cli").long("cli").help("Runs in CLI mode"))
+        .get_matches();
+
+    match matches.occurrences_of("cli") {
+        0 => api::serve("localhost:8000", repo),
+        _ => cli::run(repo),
+    }
 }
