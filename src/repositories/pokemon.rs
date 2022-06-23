@@ -216,7 +216,10 @@ impl Repository for SqliteRepository {
         };
         let transaction = match lock.transaction() {
             Ok(t) => t,
-            _ => return Err(InsertError::Unknown),
+            Err(e) => {
+                println!("error while starting transaction: {e}");
+                return Err(InsertError::Unknown);
+            }
         };
 
         match transaction.execute(
@@ -230,21 +233,28 @@ impl Repository for SqliteRepository {
                 }
                 return Err(InsertError::Unknown);
             }
-            Err(_) => return Err(InsertError::Unknown),
+            Err(e) => {
+                println!("error while inserting pokemon: {e}");
+                return Err(InsertError::Unknown);
+            }
         }
 
         for tipe in Vec::from(types.clone()) {
-            if let Err(_) = transaction.execute(
-                "insert into pokemon_types values(?, ?)",
+            if let Err(e) = transaction.execute(
+                "insert into types values(?, ?)",
                 params![u16::from(number.clone()), tipe],
             ) {
+                println!("error in inserting type: {e}");
                 return Err(InsertError::Unknown);
             }
         }
 
         match transaction.commit() {
             Ok(_) => Ok(Pokemon::new(number, name, types)),
-            _ => Err(InsertError::Unknown),
+            Err(e) => {
+                println!("error while commiting transaction: {e}");
+                Err(InsertError::Unknown)
+            }
         }
     }
 
