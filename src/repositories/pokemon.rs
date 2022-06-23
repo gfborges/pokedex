@@ -337,3 +337,49 @@ impl Repository for SqliteRepository {
         }
     }
 }
+
+
+pub struct AirtableRepository {
+    url: String,
+    auth_header: String,
+}
+
+impl AirtableRepository {
+    pub fn try_new(apikey: &str, workspace_id: &str) -> Result<Self, ()> {
+        let url = format!("https://api.airtable.com/v0/{}/pokemons", workspace_id);
+        let auth_header = format!("Bearer {}", apikey);
+
+        if let Err(_) = ureq::get(&url).set("Authorization", &auth_header).call()  {
+            return Err(());
+        }
+
+        Ok(Self {
+            url,
+            auth_header,
+        })
+    }
+}
+
+
+impl Repository for AirtableRepository {
+    fn insert(
+        &self,
+        number: PokemonNumber,
+        name: PokemonName,
+        types: PokemonTypes,
+    ) -> Result<Pokemon, InsertError> {
+        Err(InsertError::Unknown)
+    }
+
+    fn fetch_all(&self) -> Result<Vec<Pokemon>, FetchAllError> {
+        Err(FetchAllError::Unknown)
+    }
+
+    fn fetch_one(&self, number: PokemonNumber) -> Result<Pokemon, FetchOneError> {
+        Err(FetchOneError::Unknown)
+    }
+
+    fn delete(&self, number: PokemonNumber) -> Result<(), DeleteError> {
+        Err(DeleteError::Unknown)
+    }
+}
