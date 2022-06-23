@@ -16,9 +16,9 @@ pub struct Request {
 }
 
 impl Request {
-    pub fn new(number: PokemonNumber) -> Self {
+    pub fn new(number: u16) -> Self {
         Self {
-            number: u16::from(number),
+            number,
         }
     }
 }
@@ -54,7 +54,7 @@ mod tests {
     fn it_should_return_unknow_error_when_an_unexpected_error_happens() {
         let repo = Arc::new(InMemoryRepository::new().with_error());
 
-        let req = Request::new(PokemonNumber::pikachu());
+        let req = Request::new(25);
         let res = execute(repo, req);
 
         assert!(matches!(res, Err(Error::Unknow)))
@@ -64,7 +64,7 @@ mod tests {
     fn it_should_return_bad_request_when_request_is_invalid() {
         let repo = Arc::new(InMemoryRepository::new());
 
-        let req = Request::new(PokemonNumber::bad());
+        let req = Request::new(0);
         let res = execute(repo, req);
 
         assert!(matches!(res, Err(Error::BadRequest)));
@@ -74,7 +74,7 @@ mod tests {
     fn it_should_return_not_found_when_request_repo_does_not_contain_pokemon() {
         let repo = Arc::new(InMemoryRepository::new());
 
-        let req = Request::new(PokemonNumber::pikachu());
+        let req = Request::new(25);
         let res = execute(repo, req);
 
         assert!(matches!(res, Err(Error::NotFound)));
@@ -90,7 +90,7 @@ mod tests {
         )
         .expect("error inserting pikachu");
 
-        let req = Request::new(PokemonNumber::pikachu());
+        let req = Request::new(25);
         let res = execute(repo, req).expect("error on execute");
 
         assert_eq!(res.number, 25);
