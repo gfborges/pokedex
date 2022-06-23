@@ -1,6 +1,7 @@
 mod create_pokemon;
 mod fetch_all_pokemons;
 mod fetch_pokemon;
+mod delete_pokemon;
 mod health;
 mod status_code;
 
@@ -21,6 +22,9 @@ pub fn serve(addr: &str, repo: Arc<dyn Repository>) {
         },
         (GET) (/{number: u16}) => {
             fetch_pokemon::serve(repo.clone(), number)
+        },
+        (DELETE) (/{number: u16}) => {
+            delete_pokemon::serve(repo.clone(), number)
         },
         (GET) (/) => {
             fetch_all_pokemons::serve(repo.clone())

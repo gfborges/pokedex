@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::repositories::pokemon::{self, FetchOneError, Repository};
+use crate::repositories::pokemon::{FetchOneError, Repository};
 
 use super::entities::PokemonNumber;
 

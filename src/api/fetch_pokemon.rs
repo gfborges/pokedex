@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use crate::repositories::pokemon::Repository;
 

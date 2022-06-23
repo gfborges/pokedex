@@ -1,5 +1,6 @@
 use std::cmp::{PartialEq, PartialOrd};
-#[derive(Clone)]
+
+#[derive(Clone, Debug)]
 pub struct Pokemon {
     pub number: PokemonNumber,
     pub name: PokemonName,
@@ -35,7 +36,7 @@ impl Pokemon {
     }
 }
 
-#[derive(PartialEq, Clone, PartialOrd, Eq, Ord)]
+#[derive(PartialEq, Clone, PartialOrd, Eq, Ord, Debug)]
 pub struct PokemonNumber(u16);
 
 #[cfg(test)]
@@ -72,7 +73,7 @@ impl From<PokemonNumber> for u16 {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PokemonName(String);
 
 #[cfg(test)]
@@ -108,7 +109,7 @@ impl From<PokemonName> for String {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 enum PokemonType {
     Electric,
     Fire,
@@ -135,7 +136,7 @@ impl From<PokemonType> for String {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PokemonTypes(Vec<PokemonType>);
 
 #[cfg(test)]
