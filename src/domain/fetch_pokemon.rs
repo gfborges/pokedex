@@ -6,7 +6,7 @@ use super::entities::PokemonNumber;
 
 #[derive(Debug)]
 pub enum Error {
-    Unknow,
+    Unknown,
     BadRequest,
     NotFound,
 }
@@ -39,7 +39,7 @@ pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Result<Response, Erro
                 types: Vec::<String>::from(pokemon.types),
             }),
             Err(FetchOneError::NotFound) => Err(Error::NotFound),
-            Err(FetchOneError::Unknow) => Err(Error::Unknow),
+            Err(FetchOneError::Unknow) => Err(Error::Unknown),
         },
         Err(_) => Err(Error::BadRequest),
     }
@@ -57,7 +57,7 @@ mod tests {
         let req = Request::new(25);
         let res = execute(repo, req);
 
-        assert!(matches!(res, Err(Error::Unknow)))
+        assert!(matches!(res, Err(Error::Unknown)))
     }
 
     #[test]

@@ -25,6 +25,6 @@ pub fn serve(repo: Arc<dyn Repository>, number: u16) -> rouille::Response {
         }),
         Err(fetch_pokemon::Error::BadRequest) => rouille::Response::from(Status::BadRequest),
         Err(fetch_pokemon::Error::NotFound) => rouille::Response::from(Status::NotFound),
-        Err(fetch_pokemon::Error::Unknow) => rouille::Response::from(Status::InternalServerError),
+        Err(fetch_pokemon::Error::Unknown) => rouille::Response::from(Status::InternalServerError),
     }
 }
