@@ -9,6 +9,7 @@ pub struct Request {
     pub types: Vec<String>,
 }
 
+#[derive(Debug)]
 pub struct Response {
     pub number: u16,
     pub name: String,

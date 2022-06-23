@@ -5,12 +5,6 @@ use crate::domain::create_pokemon;
 
 use super::{prompt_number, prompt_name, prompt_types};
 
-#[derive(Debug)]
-struct Response {
-    number: u16,
-    name: String,
-    types: Vec<String>,
-}
 
 pub fn run(repo: Arc<dyn Repository>) {
     let number = prompt_number();
@@ -33,11 +27,7 @@ pub fn run(repo: Arc<dyn Repository>) {
     match create_pokemon::execute(repo, req) {
         Ok(res) => println!(
             "{:?}",
-            Response {
-                number: res.number,
-                name: res.name,
-                types: res.types,
-            }
+            res
         ),
         Err(create_pokemon::Error::BadRequest) => println!("The request is invalid"),
         Err(create_pokemon::Error::Conflict) => println!("The Pokemon already exists"),
