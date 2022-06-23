@@ -1,0 +1,32 @@
+@url = http://localhost:8000
+
+### create pikachu
+POST {{url}}
+Content-Type: application/json
+
+{
+    "number": 25,
+    "name": "Pikachu",
+    "types": ["Electric"]
+}
+
+### create rotom
+POST {{url}}
+Content-Type: application/json
+
+{
+    "number": 479,
+    "name": "Rotom",
+    "types": ["Fire", "Electric"]
+}
+
+### fetch all pokemon
+GET {{url}} 
+
+### fetch pikachu
+GET {{url}}/25
+
+### delete pikachu
+DELETE {{url}}/25
+
+###

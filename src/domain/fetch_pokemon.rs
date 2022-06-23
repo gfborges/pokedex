@@ -44,6 +44,7 @@ pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Result<Response, Erro
         Err(_) => Err(Error::BadRequest),
     }
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
