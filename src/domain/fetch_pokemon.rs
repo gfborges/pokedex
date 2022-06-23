@@ -39,7 +39,7 @@ pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Result<Response, Erro
                 types: Vec::<String>::from(pokemon.types),
             }),
             Err(FetchOneError::NotFound) => Err(Error::NotFound),
-            Err(FetchOneError::Unknow) => Err(Error::Unknown),
+            Err(FetchOneError::Unknown) => Err(Error::Unknown),
         },
         Err(_) => Err(Error::BadRequest),
     }
