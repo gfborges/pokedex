@@ -156,7 +156,7 @@ impl Repository for AirtableRepository {
             _ => return Err(DeleteError::Unknown),
         };
 
-        if !json.records.is_empty() {
+        if json.records.is_empty() {
             return Err(DeleteError::NotFound);
         }
 
