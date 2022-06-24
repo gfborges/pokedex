@@ -1,7 +1,7 @@
 @url = http://localhost:8000
 
 ### create pikachu
-POST {{url}}
+POST {{url}} HTTP/1.1
 Content-Type: application/json
 
 {
@@ -19,6 +19,17 @@ Content-Type: application/json
     "name": "Rotom",
     "types": ["Fire", "Electric"]
 }
+
+### create bulbassaur
+POST {{url}}
+Content-Type: application/json
+
+{
+    "number": 1,
+    "name": "Bulbassaur",
+    "types": ["Grass"]
+}
+
 
 ### fetch all pokemon
 GET {{url}} 

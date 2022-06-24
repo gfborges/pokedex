@@ -113,6 +113,7 @@ impl From<PokemonName> for String {
 enum PokemonType {
     Electric,
     Fire,
+    Grass,
 }
 
 impl TryFrom<String> for PokemonType {
@@ -122,6 +123,7 @@ impl TryFrom<String> for PokemonType {
         match tipe.as_str() {
             "Electric" => Ok(PokemonType::Electric),
             "Fire" => Ok(PokemonType::Fire),
+            "Grass" => Ok(PokemonType::Grass),
             _ => Err(()),
         }
     }
@@ -132,6 +134,7 @@ impl From<PokemonType> for String {
         match tipe {
             PokemonType::Electric => "Electric".to_owned(),
             PokemonType::Fire => "Fire".to_owned(),
+            PokemonType::Grass => "Grass".to_owned(),
         }
     }
 }
