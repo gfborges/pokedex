@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 mod api;
 mod cli;
 pub mod domain;
@@ -11,8 +9,14 @@ extern crate rouille;
 extern crate clap;
 extern crate serde;
 
+use std::sync::Arc;
+
 use clap::{App, Arg, Values};
-use repositories::{pokemon::{Repository, SqliteRepository, AirtableRepository}, inmemory_pokemon::InMemoryRepository};
+
+use repositories::inmemory_pokemon::InMemoryRepository;
+use repositories::pokemon::Repository;
+use repositories::airtable_pokemon::AirtableRepository;
+use repositories::sqlite_pokemon::SqliteRepository;
 
 fn main() {
     let matches = App::new(crate_name!())
