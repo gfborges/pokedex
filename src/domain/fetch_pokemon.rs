@@ -48,8 +48,7 @@ pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Result<Response, Erro
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::entities::{PokemonName, PokemonNumber, PokemonTypes};
-    use crate::repositories::pokemon::InMemoryRepository;
+    use crate::{domain::entities::{PokemonName, PokemonNumber, PokemonTypes}, repositories::inmemory_pokemon::InMemoryRepository};
 
     #[test]
     fn it_should_return_unknow_error_when_an_unexpected_error_happens() {

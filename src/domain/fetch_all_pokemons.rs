@@ -30,10 +30,8 @@ pub fn execute(repo: Arc<dyn Repository>) -> Result<Vec<Response>, Error> {
 #[cfg(test)]
 mod tests {
 
-    use crate::{
-        domain::entities::{PokemonName, PokemonNumber, PokemonTypes},
-        repositories::pokemon::{InMemoryRepository, Repository},
-    };
+    use crate::domain::entities::{PokemonName, PokemonNumber, PokemonTypes};
+    use crate::repositories::inmemory_pokemon::InMemoryRepository;
 
     use super::*;
 

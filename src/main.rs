@@ -12,7 +12,7 @@ extern crate clap;
 extern crate serde;
 
 use clap::{App, Arg, Values};
-use repositories::pokemon::{InMemoryRepository, Repository, SqliteRepository, AirtableRepository};
+use repositories::{pokemon::{Repository, SqliteRepository, AirtableRepository}, inmemory_pokemon::InMemoryRepository};
 
 fn main() {
     let matches = App::new(crate_name!())

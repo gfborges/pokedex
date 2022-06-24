@@ -46,10 +46,8 @@ pub fn serve(repo: Arc<dyn Repository>, req: &rouille::Request) -> rouille::Resp
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        domain::entities::{PokemonName, PokemonNumber, PokemonTypes},
-        repositories::pokemon::InMemoryRepository,
-    };
+    use crate::domain::entities::{PokemonName, PokemonNumber, PokemonTypes};
+    use crate::repositories::inmemory_pokemon::InMemoryRepository;
 
     use super::*;
 

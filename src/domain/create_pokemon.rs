@@ -45,7 +45,7 @@ pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Result<Response, Erro
 #[cfg(test)]
 mod tests {
 
-    use crate::repositories::pokemon::InMemoryRepository;
+    use crate::repositories::inmemory_pokemon::InMemoryRepository;
 
     use super::*;
 

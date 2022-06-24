@@ -30,7 +30,7 @@ mod tests {
 
     use super::*;
     use crate::domain::entities::{PokemonName, PokemonTypes};
-    use crate::repositories::pokemon::InMemoryRepository;
+    use crate::repositories::inmemory_pokemon::InMemoryRepository;
 
     #[test]
     fn it_should_return_unknown_error_when_unexpected_error_happens() {
