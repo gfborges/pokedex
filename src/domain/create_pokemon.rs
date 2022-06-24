@@ -23,22 +23,23 @@ pub enum Error {
 }
 
 pub fn execute(repo: Arc<dyn Repository>, req: Request) -> Result<Response, Error> {
-    match (
+    let pokemon = match (
         PokemonNumber::try_from(req.number),
         PokemonName::try_from(req.name),
         PokemonTypes::try_from(req.types),
     ) {
-        (Ok(number), Ok(name), Ok(types)) => match repo.insert(number, name.clone(), types.clone())
-        {
-            Ok(pokemon) => Ok(Response {
-                number: u16::from(pokemon.number),
-                name: String::from(pokemon.name),
-                types: Vec::<String>::from(pokemon.types),
-            }),
-            Err(InsertError::Conflict) => Err(Error::Conflict),
-            _ => Err(Error::Unknown),
-        },
-        _ => Err(Error::BadRequest),
+        (Ok(number), Ok(name), Ok(types)) => repo.insert(number, name.clone(), types.clone()),
+        _ => return Err(Error::BadRequest),
+    };
+
+    match pokemon {
+        Ok(pokemon) => Ok(Response {
+            number: u16::from(pokemon.number),
+            name: String::from(pokemon.name),
+            types: Vec::<String>::from(pokemon.types),
+        }),
+        Err(InsertError::Conflict) => Err(Error::Conflict),
+        _ => Err(Error::Unknown),
     }
 }
 
@@ -102,7 +103,10 @@ mod tests {
         };
         let res = execute(repo, req);
 
-        assert!(matches!(res, Err(Error::Conflict)), "execute didn't return conflict");
+        assert!(
+            matches!(res, Err(Error::Conflict)),
+            "execute didn't return conflict"
+        );
     }
 
     #[test]
