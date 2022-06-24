@@ -391,7 +391,7 @@ impl AirtableRepository {
             }
         };
 
-        match res.into_json::<AirtableJson>() {
+        match res.into_json() {
             Ok(json) => Ok(json),
             Err(e) => {
                 println!("error deserializing json: {e}");
@@ -454,7 +454,10 @@ impl Repository for AirtableRepository {
                 (Ok(number), Ok(name), Ok(types)) => {
                     pokemons.push(Pokemon::new(number, name, types))
                 }
-                _ => return Err(FetchAllError::Unknown),
+                _ => {
+                    println!("error parsing pokemon({})", record.fields.number);
+                    return Err(FetchAllError::Unknown)
+                },
             }
         }
 
