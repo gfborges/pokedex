@@ -65,6 +65,17 @@ impl AirtableRepository {
     }
 }
 
+#[cfg(test)]
+impl AirtableRepository {
+    pub fn new_test(url: &str, apikey: &str) -> Self {
+        let auth_header = format!("Bearer {apikey}");
+        Self {
+            url: url.to_owned(),
+            auth_header,
+        }
+    }
+}
+
 impl Repository for AirtableRepository {
     fn insert(
         &self,
@@ -172,4 +183,152 @@ impl Repository for AirtableRepository {
         }
         Ok(())
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::domain::entities::PokemonNumber;
+    use httpmock::prelude;
+    use serde_json::json;
+
+    const APIKEY: &str = "TEST-KEY";
+
+    #[test]
+    fn it_should_create_repository_with_url_and_apikey() {
+        let server = prelude::MockServer::start();
+        let url = server.url("/test/api");
+        let repo = AirtableRepository::new_test(url.as_str(), APIKEY);
+
+        assert_eq!(repo.url, server.url("/test/api"));
+        assert_eq!(repo.auth_header, "Bearer TEST-KEY");
+    }
+
+    #[test]
+    fn it_should_fail_to_delete_when_pokemon_does_not_exist() {
+        let server = prelude::MockServer::start();
+        let url = server.url("/test/api");
+        let repo = AirtableRepository::new_test(url.as_str(), APIKEY);
+
+        let pokedex_mock = server.mock(|when, then| {
+            when.method(prelude::GET).path("/test/api");
+            then.status(200).json_body(json!({"records": []}));
+        });
+
+        let err = repo
+            .delete(PokemonNumber::pikachu())
+            .expect_err("should have returned error on delete");
+
+        pokedex_mock.assert();
+        assert!(matches!(err, DeleteError::NotFound));
+    }
+
+    #[test]
+    fn it_should_fail_to_delete_when_json_is_incorrect() {
+        let server = prelude::MockServer::start();
+        let url = server.url("/test/api");
+        let repo = AirtableRepository::new_test(url.as_str(), APIKEY);
+
+        let pokedex_mock = server.mock(|when, then| {
+            when.method(prelude::GET).path("/test/api");
+            then.status(200).json_body(json!({"records": [{
+                "id": "ID",
+                "fields": {
+                    "number": ""
+                }
+            }]}));
+        });
+
+        let err = repo
+            .delete(PokemonNumber::pikachu())
+            .expect_err("should have returned error on delete");
+
+        pokedex_mock.assert();
+        assert!(matches!(err, DeleteError::Unknown));
+    }
+
+    #[test]
+    fn it_should_fail_to_delete_when_pokemon_fetching_fails() {
+        let server = prelude::MockServer::start();
+        let url = server.url("/test/api");
+        let repo = AirtableRepository::new_test(url.as_str(), APIKEY);
+
+        let pokedex_mock = server.mock(|when, then| {
+            when.method(prelude::GET).path("/test/api");
+            then.status(500);
+        });
+
+        let err = repo
+            .delete(PokemonNumber::pikachu())
+            .expect_err("should have returned error on delete");
+
+        pokedex_mock.assert();
+        assert!(matches!(err, DeleteError::Unknown));
+    }
+
+    #[test]
+    fn it_should_fail_to_delete_when_delete_request_fails() {
+        let server = prelude::MockServer::start();
+        let url = server.url("/test/api");
+        let repo = AirtableRepository::new_test(url.as_str(), APIKEY);
+
+        let get_route = server.mock(|when, then| {
+            when.method(prelude::GET).path("/test/api");
+            then.status(200).json_body(json!(
+            {"records": [{
+                "id":"ID",
+                "fields": {
+                    "number": 25u16,
+                    "name": "pikachu",
+                    "types": ["Electric"]
+                }
+            }]}));
+        });
+
+        let delete_route = server.mock(|when, then| {
+            when.method(prelude::DELETE).path("/test/api/ID");
+            then.status(500);
+        });
+
+        let err = repo
+            .delete(PokemonNumber::pikachu())
+            .expect_err("should have returned error on delete");
+
+        assert!(matches!(err, DeleteError::Unknown));
+        assert_eq!(get_route.hits(), 1);
+        assert_eq!(delete_route.hits(), 1);
+    }
+
+    #[test]
+    fn it_should_delete_otherwise() {
+        let server = prelude::MockServer::start();
+        let url = server.url("/test/api");
+        let repo = AirtableRepository::new_test(url.as_str(), APIKEY);
+
+        let get_route = server.mock(|when, then| {
+            when.method(prelude::GET).path("/test/api");
+            then.status(200).json_body(json!(
+            {"records": [{
+                "id":"ID",
+                "fields": {
+                    "number": 25u16,
+                    "name": "pikachu",
+                    "types": ["Electric"]
+                }
+            }]}));
+        });
+
+        let delete_route = server.mock(|when, then| {
+            when.method(prelude::DELETE).path("/test/api/ID");
+            then.status(200);
+        });
+
+        let res = repo
+            .delete(PokemonNumber::pikachu());
+
+        assert!(res.is_ok());
+        assert_eq!(get_route.hits(), 1);
+        assert_eq!(delete_route.hits(), 1);
+    }
+    
 }
